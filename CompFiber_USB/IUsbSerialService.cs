@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CompFiber_USB
 {
+    // Trevor-implemented Serial interface from MAUI documentation and GPT 4
     public interface IUsbSerialService
     {
         Task<List<string>> GetConnectedDevicesAsync();

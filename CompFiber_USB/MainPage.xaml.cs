@@ -1,10 +1,8 @@
 ﻿using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.ApplicationModel.Communication;
-
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
 
 
 namespace CompFiber_USB
@@ -12,40 +10,53 @@ namespace CompFiber_USB
     public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
         int count = 0;
-        public ObservableCollection<UsbDevice> UsbDevices { get; set;}
+        public ObservableCollection<UsbDevice_> UsbDevices { get; set;}
         private IUsbSerialService usbSerialService;
 
         public MainPage()
         {
             InitializeComponent();
 
-            UsbDevices = new ObservableCollection<UsbDevice>();
+            UsbDevices = new ObservableCollection<UsbDevice_>();
             usbSerialService = DependencyService.Get<IUsbSerialService>();
 
             BindingContext = this;
 
-            //LoadConnectedDevicesAsync();
+            LoadConnectedDevicesAsync();
             CheckAndRequestUsbPermission();
         }
 
         private async void LoadConnectedDevicesAsync()
         {
-            // Call the async method to get connected devices
-            var deviceNames = await usbSerialService.GetConnectedDevicesAsync();
-
-            // Clear existing devices and add the new ones
-            UsbDevices.Clear();
-
-            foreach (var deviceName in deviceNames)
+            try
             {
-                // var deviceInfo = await usbSerialService.GetDeviceInfoAsync(deviceName); // Example method to get more info
+                // Call the async method to get connected devices
+                var deviceNames = await usbSerialService.GetConnectedDevicesAsync();
 
-                usbSerialService.GetHashCode(); // Example method to get more info
-                
-                UsbDevices.Add(new UsbDevice
+                // Clear existing devices and add the new ones
+                UsbDevices.Clear();
+
+                foreach (var deviceName in deviceNames)
                 {
-                    DeviceName = deviceName,
-                });
+                    // Example: Populate the fields with mock data. Replace this with real data from the device.
+                    // For example, you could query the USB device for VendorId, ProductId, etc.
+
+                    // Fetch or calculate more details here like VendorId, ProductId
+                    //var vendorId = "FTDI1234";  // Replace with actual VendorId retrieval
+                    //var productId = "FTDI5678"; // Replace with actual ProductId retrieval
+
+                    UsbDevices.Add(new UsbDevice_
+                    {
+                        DeviceName = deviceName,
+                        //VendorId = vendorId,
+                        //ProductId = productId
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle errors appropriately, e.g., show a message to the user.
+                await DisplayAlert("Error", "Unable to load USB devices: " + ex.Message, "OK");
             }
         }
 
@@ -87,10 +98,11 @@ namespace CompFiber_USB
     }
 
     // Class to hold device information
-    public class UsbDevice
+    public class UsbDevice_
     {
-        public string? DeviceName { get; set; }
-        // public string VendorId { get; set; }
-        // public string ProductId { get; set; }
+       public string? DeviceName { get; set; }
+       //public int InterfaceCount { get; internal set; }
+       public string? VendorId { get; set; }
+       public string? ProductId { get; set; }
     }
 }
